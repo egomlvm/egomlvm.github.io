@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="description" content="">
+       <meta name="keywords" content="egocentric computer vision; large video model;">
+      <meta name="author" content="Gen Li">
+      <title>EgoMLVM: An Egocentric Multitask Large Video Model</title>
+
+      <meta property="og:title" content="EgoMLVM" />
+      <meta property="og:description" content="">
+      <meta property="og:image" content="" />
+
+      <!--<meta name="twitter:card" content="summary_large_image" />-->
+      <meta name="twitter:title" content="EgoMLVM" />
+      <meta name="twitter:description" content="" />
+      <meta name="twitter:image" content="" />
+      <!--<meta name="twitter:image:alt" content="EgoBody" />-->
+
+      <!-- Bootstrap core CSS -->
+      <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+      <!-- Custom styles for this template -->
+      <link href="css/scrolling-nav.css" rel="stylesheet">
+       <link href="css/hr.css" rel="stylesheet" >
+      <!-- nice figures  -->
+<!--      <link rel="stylesheet" href="css/font-awesome.css">-->
+      <link rel="icon" type="image/png" href="images/logo.png">
+<!--       <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22></text></svg>"> -->
+    <style>
+   #mainNav .navbar-nav .nav-item {
+      margin-right: 20px; /* Adjust the value as needed */
+   }
+</style>
+        
+        <script async src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
+        <style>
+    /* Custom CSS for showing submenus on hover */
+    .nav-item.dropdown:hover .dropdown-menu {
+      display: block;
+    }
+  </style>
+
+
+   </head>
+   <body id="page-top">
+      <!-- Navigation -->
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+         <div class="container">
+            <a class="navbar-brand js-scroll-trigger" href="#page-top">EgoMLVM <img src="images/logo.png" style="vertical-align: -3px;" width="20"> </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+               <ul class="navbar-nav ml-auto">
+                  <li class="nav-item">
+                     <a class="nav-link js-scroll-trigger" href="#about">About</a>
+                  </li>
+
+      <!-- Dropdown button with submenus -->
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#method" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          TODO
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <!-- Dropdown items with links to different sections -->
+          <a class="dropdown-item" href="#training">TODO</a>
+          <a class="dropdown-item" href="#eval">TODO</a>
+        </div>
+      </li>
+
+                  <li class="nav-item">
+                     <a class="nav-link js-scroll-trigger" href="#rendering">TODO</a>
+                  </li>
+
+                    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#applications" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Applications
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <!-- Dropdown items with links to different sections -->
+          <a class="dropdown-item" href="#cam">Egocentric Camera Tracking</a>
+          <a class="dropdown-item" href="#gaze">Gaze Estimation in Egocentric Videos</a>
+          <a class="dropdown-item" href="#depth">Egocentric Monocular Depth Estimation</a>
+          <a class="dropdown-item" href="#rgb">Conditional Egocentric Video Synthesis</a>
+        </div>
+      </li>
+
+                  <li class="nav-item">
+                     <a class="nav-link js-scroll-trigger" href="#video">Video</a>
+                  </li>
+                   <!--<li class="nav-item">
+                     <a class="nav-link js-scroll-trigger" href="#downloads">Downloads</a>
+                  </li>-->
+                  <li class="nav-item">
+                     <a class="nav-link js-scroll-trigger" href="#citation">Citation</a>
+                  </li>
+                  <!--<li class="nav-item">
+                     <a class="nav-link js-scroll-trigger" href="#team">Team</a>
+                  </li>-->
+               </ul>
+            </div>
+         </div>
+      </nav>
+
+      <style>
+        .section-offset {
+            padding-top: 60px; /* Adjust this value to match your navbar height */
+            margin-top: -60px; /* Negative margin to counteract the padding */
+        }
+    </style>
+
+      <header class="bg-light text-black">
+          <div class="container text-center">
+	      <h7><img src="images/logo.png" width="45"></h7>
+              <h1><font color="#015FBD "><b>EgoMLVM</b></font></h1>
+              <h2><font color="#015FBD "><b>An Egocentric Multitask Large Video Model </b></font></h2><br><br>
+              <div id="content">
+          <div id="content-inner">
+
+            <div class="section head">
+
+                <div class="authors">
+                    <h5>
+                        <a href="https://vlg.inf.ethz.ch/team/Gen-Li.html">Gen Li</a><sup>1</sup>&nbsp;
+                        <a href="https://vlg.inf.ethz.ch/team/Yutong-Chen.html">Yutong Chen</a><sup>*1</sup>&nbsp;
+                        <a href="https://onethousandwu.com/">Yiqian Wu</a><sup>*1, 2</sup>&nbsp;
+                        <a href="https://vlg.inf.ethz.ch/team/Kaifeng-Zhao.html">Kaifeng Zhao</a><sup>*1</sup>&nbsp;
+                        <a href="https://cvg.ethz.ch/team/Prof-Dr-Marc-Pollefeys">Marc Pollefeys</a><sup>1, 3</sup>&nbsp;
+                        <a href="https://vlg.inf.ethz.ch/team/Prof-Dr-Siyu-Tang.html">Siyu Tang</a><sup>1</sup>
+                        <h5>
+                        <p><small>* Indicates equal contribution, listed in alphabetical order.</small></p>
+                </div>
+
+                <div class="affiliations">
+                    <h5>
+                        <sup>1</sup><a href="https://ethz.ch/en.html">ETH Zürich</a>&nbsp; &nbsp;&nbsp;
+                        <sup>2</sup><a href="https://www.zju.edu.cn/english/">Zhejiang University</a> &nbsp;&nbsp;
+                        <sup>3</sup><a href="https://www.microsoft.com/en-us/research/">Microsoft</a> &nbsp;&nbsp;
+                        
+                        <h5>
+                </div>
+
+                <br>
+                <!--<div class="venue"><h5>The IEEE/CVF Conference on Computer Vision and Pattern Recognition (<a href="https://cvpr.thecvf.com/Conferences/2024" target="_blank">CVPR</a>) 2024 <h5></div>
+		<div class="venue"><h5> <font color="#EE0303 "><b>Oral Presentation </b></font> <h5></div>-->
+
+
+                <div class="downloads">
+                    <br><h3>
+                    <a class="publink" href="" target="_blank" style="text-decoration: none"> Arxiv <i class="fa fa-print"></i></a> &nbsp;
+                    &nbsp;&nbsp;
+                    <a class="publink" href="" target="_blank" style="text-decoration: none"> Code <i class="fa fa-github"></i></a>
+                    <h3>
+                </div>
+            </div>
+
+
+        </div>
+      </header>
+
+
+      <section id="about" class="about-section">
+         <div class="container">
+            <div class="row">
+               <div class="col-lg-10 mx-auto">
+                     <!-- <p><img class="img-fluid" alt="teaser" src="https://via.placeholder.com/1500x600"></p> -->
+                     <!--<img class="img-fluid" alt="teaser" src="images/teaser.png" style="width: 50%; height: auto;"></p>-->
+                     <div class="image-container" style="text-align: center;">
+                        <img class="img-fluid" alt="teaser" src="images/teaser.png" style="width: 50%; height: auto;">
+                    </div>
+                    <br>
+                     <h5 class="img-wide text-center">
+                        <font color="#6F6D6D " size="4">EgoMLVM: A large-scale egocentric multimodal and multitask video model, trained on eight extensive egocentric datasets. It incorporates four modalities—RGB and depth video, gaze dynamics, and camera trajectories—to handle challenging tasks like monocular egocentric depth estimation, camera tracking, gaze estimation, and conditional egocentric video synthesis. For simplicity, we only visualize four frames here. </font>
+                        <h5>
+                  <br>
+		     <!--<p><video style="width: 100%; height: auto; display: block; margin: auto;" controls autoplay preload loop muted playsinline> <source src="video/teaser.mp4" type="video/mp4"/> </video>-->
+                  <!--<div class="embed-responsive embed-responsive-16by9">
+                  <iframe width="560" height="315" src="https://www.youtube.com/embed/QbiOJKZ6PBU?si=kdYkxYNZX-SGOa8G&mute=1&autoplay=1&loop=1&playlist=QbiOJKZ6PBU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                  </div>-->
+
+                  <br>
+                   <h2>Abstract</h2>
+                   <div class="text-center">
+                     <!-- <p><img class="img-fluid" alt="teaser" src="https://via.placeholder.com/1500x600"></p> -->
+<!--                     <p><img class="img-fluid" alt="teaser" src="images/teaser.png"></p>-->
+                       <p class="lead text-justify">
+<!--                           <b>Dataset Overview</b>. -->
+Understanding multimodal signals in egocentric vision, such as RGB video, depth, camera poses, and gaze, is essential for applications in augmented reality, robotics, and human-computer interaction, enabling systems to better interpret the camera wearer’s actions, intentions, and surrounding environment. 
+However, building large-scale egocentric multimodal and
+multitask models presents unique challenges. Egocentric data are inherently heterogeneous, with large variations in modality coverage across devices and settings. 
+Generating pseudo-labels for missing modalities, such as gaze or head-mounted camera trajectories, is often infeasible, making standard supervised learning approaches difficult to scale. Furthermore, dynamic camera motion and the complex temporal and spatial structure of first-person video pose additional challenges for the direct application of existing multimodal foundation models.
+To address these challenges, we introduce a set of efficient temporal tokenizers and propose EgoMLVM, a masked modeling framework that learns from temporally-aware multimodal tokens to train a large, general-purpose video model for egocentric understanding. This unified design supports multitasking across diverse egocentric perception and synthesis tasks, including gaze prediction, egocentric camera tracking, and monocular depth estimation from egocentric video, and also serves as a generative model for conditional egocentric video synthesis. 
+Across these tasks, EgoMLVM matches or outperforms specialist models while being an order of magnitude faster. 
+We will fully open-source EgoMLVM to support the community and advance egocentric vision research.
+                    </p>
+                  </div>
+
+
+
+               </div>
+            </div>
+         </div>
+      </section>
+
+
+
+      <section id="method" class="">
+         <div class="container" id="training">
+            <div class="row">
+               <div class="col-lg-10 mx-auto">
+                   <h2>TODO</h2> <br>
+                  <h3>TODO</h3>
+                  <div class="text-center">
+                     <!-- <p><img class="img-fluid" alt="teaser" src="https://via.placeholder.com/1500x600"></p> -->
+<!--                     <p><img class="img-fluid" alt="teaser" src="images/teaser.png"></p>-->
+                       <p class="lead text-justify">
+                      
+                    </p>
+
+                       <p class="lead text-justify">
+                    
+                    </p>
+                  </div>
+                     <p><img class="img-fluid" alt="method overview" src="images/model_overview_new.png"></p>
+                    <h5 class="img-wide text-center" id="eval">
+                        <font color="#6F6D6D " size="4">
+                            (1) We train VQ-VAE tokenizers for camera trajectories and gaze dynamics, and adopt Cosmos tokenizers to tokenize RGB and depth streams. High-dimensional input modalities, including videos, gaze dynamics, and camera trajectories, are compressed into discrete tokens to serve as our training database. (2) Our EgoMLVM follows the architecture of T5-Base. We perform multimodal masked pretraining, where we randomly sample a fixed number of input and target tokens from our token database without overlap. For simplicity, we only visualize four frames here.
+                        </font>
+                  <br>
+                  <h3>TODO</h3>
+                  <p class="lead text-justify">
+                
+                </p>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+        
+        <!--
+        <div style="text-align: center;">
+            <h6>Moving Obstacle</h6>
+            <video style="width: 90%; height: auto; display: block; margin: auto;" controls autoplay loop muted playsinline>
+                <source src="video/moving.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <div style="text-align: center;">
+            <h6>Two People</h6>
+            <video style="width: 90%; height: auto; display: block; margin: auto;" controls autoplay loop muted playsinline>
+                <source src="video/2man.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <div style="text-align: center;">
+            <h6>More People</h6>
+            <video style="width: 90%; height: auto; display: block; margin: auto;" controls autoplay loop muted playsinline>
+                <source src="video/4man.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <div style="text-align: center;">
+            <h6>Even More People</h6>
+            <video style="width: 90%; height: auto; display: block; margin: auto;" controls autoplay loop muted playsinline>
+                <source src="video/8man.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>-->
+
+    </div>
+
+           <br> <br>
+
+
+    </div>
+
+               </div>
+            </div>
+         </div>
+
+     <section id="rendering" class="">
+         <div class="container">
+            <div class="row">
+               <div class="col-lg-10 mx-auto">
+                   <h2>TODO</h2> <br>
+                  <div class="text-center">
+                     <!-- <p><img class="img-fluid" alt="teaser" src="https://via.placeholder.com/1500x600"></p> -->
+<!--                     <p><img class="img-fluid" alt="teaser" src="images/teaser.png"></p>-->
+                       <p class="lead text-justify">
+<!--                           <b>Dataset Overview</b>. -->
+
+                    </p>
+                  </div>
+
+<!--                   <p class="lead text-justify">-->
+<!--                       TODO-->
+<!--                   </p>-->
+               </div>
+            </div>
+         </div>
+      </section>
+    
+    <section id="applications" class="">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <h2>Applications</h2> <br>
+    
+                    <!-- Egocentric Camera Tracking Section -->
+                    <div id="cam" class="section-container section-offset">
+                        <h3 id="cam-track">Egocentric Camera Tracking</h3>
+                        <p class="lead text-justify">Coming Soon...</p>
+                        <div class="images-container" style="display: flex; justify-content: center; gap:10px; width: 80%; margin: auto;">
+                            <!-- Images or content go here -->
+                        </div>
+                    </div>
+    
+                    <br><br>
+    
+                    <!-- Gaze Estimation Section -->
+                    <div id="gaze" class="section-container section-offset">
+                        <h3 id="gaze-estimation">Gaze Estimation in Egocentric Videos</h3>
+                        <p class="lead text-justify">Coming Soon...</p>
+                        <div class="content-container" style="display: flex; justify-content: space-between;">
+                            <!-- Content or videos go here -->
+                        </div>
+                    </div>
+    
+                    <br>
+    
+                    <!-- Egocentric Monocular Depth Estimation Section -->
+                    <div id="depth" class="section-container section-offset">
+                        <h3 id="depth-estimation">Egocentric Monocular Depth Estimation</h3>
+                        <p class="lead text-justify">Coming Soon...</p>
+                        <div class="images-container" style="display: flex; justify-content: center; gap:10px; width: 80%; margin: auto;">
+                            <!-- Images or content go here -->
+                        </div>
+                    </div>
+    
+                    <br><br>
+    
+                    <!-- Conditional Egocentric Video Synthesis Section -->
+                    <div id="rgb" class="section-container section-offset">
+                        <h3 id="video-synthesis">Conditional Egocentric Video Synthesis</h3>
+                        <p class="lead text-justify">Coming Soon...</p>
+                        <div class="images-container" style="display: flex; justify-content: center; gap:10px; width: 80%; margin: auto;">
+                            <!-- Images or content go here -->
+                        </div>
+                    </div>
+    
+                    <br>
+    
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    
+
+
+      <section id="video" class="">
+         <div class="container">
+            <div class="row">
+               <div class="col-lg-10 mx-auto">
+                  <h2 class="section-title-tc">Video</h2>
+                  <p class="lead text-justify">Coming Soon...</p>
+                  <!--
+                  <div class="embed-responsive embed-responsive-16by9">
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/-WKQ4Vx2AXU?si=T5bcu9-3m-jisFMj" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                  </div> -->
+               </div>
+            </div>
+         </div>
+      </section>
+
+				
+      <!--<section id="downloads" class="">
+         <div class="container">
+            <div class="row">
+               <div class="col-lg-10 mx-auto">
+                   <h2>Downloads</h2> <br>
+                  <h2 class="img-wide text-center">
+                      <a class="publink" href="" target="_blank" style="text-decoration: none"> Arxiv <i class="fa fa-print"></i></a> &nbsp;&nbsp;
+                      <a class="publink" href="" target="_blank" style="text-decoration: none"> Code <i class="fa fa-github"></i></a> &nbsp;&nbsp;
+                      </h2>
+               </div>
+            </div>
+         </div>
+      </section>-->
+
+
+
+      <section id="citation" class="">
+         <div class="container">
+            <div class="row">
+               <div class="col-lg-10 mx-auto">
+                  <h2 class="section-title-tc">Citation</h2>
+                  <br>
+                  <a class="publink" target="_blank" href=""><b>
+                    EgoMLVM: An Egocentric Multitask Large Video Model </b><br></a>
+                    Gen Li, Yutong Chen, Yiqian Wu, Kaifeng Zhao, Marc Pollefeys, Siyu Tang<br>
+                  <br><br>
+<pre style="display: block; background-color: #f5f5f5; border: 1px solid #ccc; border-radius: 4px">
+@article{li2025egomlvm,
+    title={EgoMLVM: An Egocentric Multitask Large Video Model},
+    author={Li, Gen and Chen, Yutong and Wu, Yiqian and Zhao, Kaifeng and Pollefeys, Marc and Tang, Siyu},
+    journal={TODO},
+    year={2025}
+  }  
+</pre>
+               </div>
+            </div>
+         </div>
+      </section>
+
+
+
+
+      <!--<section id="team" class="team-section">
+         <div class="container">
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <h2 class="section-title-tc">Team</h2>
+                        <div class="text-center">
+                         <table>
+                               <tr>
+                                   <th> <img src="images/teams/siwei.jpg" width="150" height="150" border="0">  </th>
+                                   <th> <img src="images/teams/qianli.jpg" width="150" height="150" border="0">  </th>
+                                   <th> <img src="images/teams/yan.jpg" width="150" height="150" border="0"> </th>
+                                   <th> <img src="images/teams/sadegh.jpg" width="150" height="150" border="0">  </th>
+                                   <th> <img src="images/teams/darren.jpg" width="150" height="150" border="0"> </th>
+                                   <th> <img src="images/teams/siyu.jpg" width="150" height="150" border="0"> </th>
+                               </tr>
+
+                               <tr>
+                                   <td> <a href="https://vlg.inf.ethz.ch/team/Siwei-Zhang.html">Siwei Zhang</a> </td>
+                                   <td> <a href="https://qianlim.github.io/">Qianli Ma</a>  </td>
+                                   <td> <a href="https://yz-cnsdqz.github.io/">Yan Zhang</a> </td>
+                                   <td> <a href="https://sadegh-aa.github.io/">Sadegh Aliakbarian</a> </td>
+                                   <td> <a href="http://www.cs.bath.ac.uk/~dpc/">Darren Cosker</a> </td>
+                                   <td> <a href="https://vlg.inf.ethz.ch/team/Prof-Dr-Siyu-Tang.html">Siyu Tang</a> </td>
+                               </tr>
+                         </table>
+
+                        </div>
+                  </div>
+               </div>
+            </div>
+      </section>-->
+
+      <section id="contact" class="">
+         <div class="container">
+            <div class="row">
+               <div class="col-lg-10 mx-auto">
+	                <h2>Contact</h2>
+		            <br>For questions, please contact Gen Li:<br><a href="mailto:gen.li@inf.ethz.ch">gen.li@inf.ethz.ch</a>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="py-5 bg-dark">
+         <div class="container">
+            <p class="m-0 text-center text-white">Copyright &copy; VLG 2025</p>
+             <p style="text-align:right;font-size:small;" class="text-white">
+            template from <a href="https://neuralbodies.github.io/LEAP/index.html">LEAP</a>
+         </div>
+         <!-- /.container -->
+      </footer>
+      <!-- Bootstrap core JavaScript -->
+      <script src="vendor/jquery/jquery.min.js"></script>
+      <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+      <!-- Plugin JavaScript -->
+      <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+      <!-- Custom JavaScript for this theme -->
+      <script src="js/scrolling-nav.js"></script>
+   </body>
+</html>
